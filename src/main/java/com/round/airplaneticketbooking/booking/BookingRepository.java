@@ -16,11 +16,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByFlight(Flight flight);
 
-    @Query("SELECT b FROM Booking b " +
-            "WHERE b.flight = :flight " +
-            "AND FUNCTION('DATE', b.departureDateTime) = FUNCTION('DATE', :departureDateTime) " +
-            "LIMIT 20")
-    List<Booking> findByFlightAndDepartureDateTime(
-            @Param("flight") Flight flight,
-            @Param("departureDateTime") LocalDateTime departureDateTime);
+    @Query("SELECT b FROM Booking b WHERE b.flight = :flight AND DATE(b.departureDateTime) = DATE(:departureDateTime)")
+    List<Booking> findByFlightAndDepartureDateTime(@Param("flight") Flight flight, @Param("departureDateTime") LocalDateTime departureDateTime);
+
 }

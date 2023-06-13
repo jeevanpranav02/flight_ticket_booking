@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    username: postgres
+    password: admin
+    url: jdbc:postgresql://localhost:5432/flight_ticket_booking
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+app:
+  jwt:
+    secret: 9D4B2FCBFEEA6D7EB7A9D99735BF1BB4D937DD1C9339B8B8C3AC27C07668865B
+    expiration: 86400000

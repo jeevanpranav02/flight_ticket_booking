@@ -12,8 +12,8 @@ This project is an Airplane Ticket Booking System that allows users to search fo
 
 ### User Features
 
-- [ ] **Login**: Users can authenticate themselves into the system.
-- [ ] **Sign up**: Users can create a new account with appropriate data validations.
+- [x] **Login**: Users can authenticate themselves into the system.
+- [x] **Sign up**: Users can create a new account with appropriate data validations.
 - [x] **Search for Flights**: Users can search for flights based on specific date and time criteria.
 - [x] **Book Tickets**: Users can book tickets on a flight based on availability of seats.
 - [x] **My Booking**: Users can view a list of all the bookings made by them.

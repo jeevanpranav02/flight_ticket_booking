@@ -1,5 +1,8 @@
 package com.round.airplaneticketbooking.enumsAndTemplates;
 
+import lombok.Builder;
+
+@Builder
 public class AuthenticationToken {
     private String token;
 

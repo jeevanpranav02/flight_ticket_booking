@@ -16,4 +16,9 @@ spring:
 app:
   jwt:
     secret: 9D4B2FCBFEEA6D7EB7A9D99735BF1BB4D937DD1C9339B8B8C3AC27C07668865B
-    expiration: 86400000
+    expiration: 3600
+server:
+  port: 9000
+  error:
+    include-message: always
+    include-exception: true

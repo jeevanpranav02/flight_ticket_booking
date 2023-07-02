@@ -1,6 +1,8 @@
 
 package com.round.airplaneticketbooking.config.security;
 
+import com.round.airplaneticketbooking.config.AdminAuthenticationProvider;
+import com.round.airplaneticketbooking.config.CustomerAuthenticationProvider;
 import com.round.airplaneticketbooking.config.JWTAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,8 +11,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -21,13 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
 
     private final JWTAuthenticationFilter jwtAuthenticationFilter;
-//    private final AuthenticationProvider adminAuthenticationProvider;
-//    private final AuthenticationProvider customerAuthenticationProvider;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final AdminAuthenticationProvider adminAuthenticationProvider;
+    private final CustomerAuthenticationProvider customerAuthenticationProvider;
 
 
     @Bean
@@ -43,8 +38,8 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-//                .authenticationProvider(adminAuthenticationProvider)
-//                .authenticationProvider(customerAuthenticationProvider)
+                .authenticationProvider(adminAuthenticationProvider)
+                .authenticationProvider(customerAuthenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

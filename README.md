@@ -12,18 +12,18 @@ This project is an Airplane Ticket Booking System that allows users to search fo
 
 ### User Features
 
-- [x] **Login**: Users can authenticate themselves into the system.
-- [x] **Sign up**: Users can create a new account with appropriate data validations.
-- [x] **Search for Flights**: Users can search for flights based on specific date and time criteria.
-- [x] **Book Tickets**: Users can book tickets on a flight based on availability of seats.
-- [x] **My Booking**: Users can view a list of all the bookings made by them.
+- [ ] **Login**: Users can authenticate themselves into the system.
+- [ ] **Sign up**: Users can create a new account with appropriate data validations.
+- [ ] **Search for Flights**: Users can search for flights based on specific date and time criteria.
+- [ ] **Book Tickets**: Users can book tickets on a flight based on availability of seats.
+- [ ] **My Booking**: Users can view a list of all the bookings made by them.
 - [ ] **Logout**: Users can log out from the system.
 
 ### Admin Features
 
-- [x] **Admin Login**: Administrators can authenticate themselves into the system with administrative privileges.
-- [x] **Add Flights**: Administrators can add new flights to the system, providing flight details such as airline, departure, and arrival information.
-- [x] **Remove Flights**: Administrators can remove flights from the system based on flight number or other criteria.
+- [ ] **Admin Login**: Administrators can authenticate themselves into the system with administrative privileges.
+- [ ] **Add Flights**: Administrators can add new flights to the system, providing flight details such as airline, departure, and arrival information.
+- [ ] **Remove Flights**: Administrators can remove flights from the system based on flight number or other criteria.
 - [ ] **View Bookings**: Administrators can view all the bookings for a specific flight based on flight number and time.
 
 ## Technologies Used

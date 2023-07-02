@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,8 +20,12 @@ import java.util.List;
 @Table(name = "admin")
 public class Admin implements UserDetails {
     @Id
-    @GeneratedValue
-    private Long adminId;
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "myGenerator")
+    @GenericGenerator(name = "myGenerator", strategy = "native")
+    private Long id;
+
+
+    @Column(name = "username")
     private String userName;
 
     @Column(unique=true)
@@ -40,10 +45,9 @@ public class Admin implements UserDetails {
         role = Role.ADMIN;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(Role.ADMIN.name()));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     @Override

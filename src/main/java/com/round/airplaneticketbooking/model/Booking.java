@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class Booking {
     @Id
     @GeneratedValue
-    private Long bookingId;
+    private Long id;
 
     private String customerEmail;
 

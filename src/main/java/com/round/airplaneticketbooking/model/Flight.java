@@ -19,7 +19,7 @@ import java.util.List;
 public class Flight {
     @Id
     @GeneratedValue
-    private Long flightId;
+    private Long id;
     private String airline;
     private Long adminId;
     private LocalDateTime departureDateTime;

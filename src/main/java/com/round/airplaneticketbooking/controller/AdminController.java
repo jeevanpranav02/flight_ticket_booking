@@ -45,12 +45,12 @@ public class AdminController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<Booking>> getBookingsByFlightAndDepartureDateTime(@PathVariable Long flightId,
                                                                                  @PathVariable LocalDateTime flightTime) {
-        Optional<Flight> optionalFlight = flightRepository.findByFlightId(flightId);
+        Optional<Flight> optionalFlight = flightRepository.findById(flightId);
         if (optionalFlight.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         Flight flight = optionalFlight.get();
-        List<Booking> bookings = adminService.getBookingsByFlightIdAndDepartureDateTime(flight.getFlightId(), flightTime);
+        List<Booking> bookings = adminService.getBookingsByFlightIdAndDepartureDateTime(flight.getId(), flightTime);
         return ResponseEntity.ok(bookings);
     }
 

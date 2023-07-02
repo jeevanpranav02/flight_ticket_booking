@@ -1,10 +1,8 @@
 package com.round.airplaneticketbooking.controller;
 
 import com.round.airplaneticketbooking.model.Booking;
-import com.round.airplaneticketbooking.constants.response.AuthenticationToken;
 import com.round.airplaneticketbooking.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -40,9 +38,9 @@ public class CustomerController {
         }
     }
 
-    @GetMapping("/logout")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
-        customerService.logout(token);
-        return ResponseEntity.ok("Logged out successfully");
-    }
+//    @GetMapping("/logout")
+//    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+//        customerService.logout(token);
+//        return ResponseEntity.ok("Logged out successfully");
+//    }
 }

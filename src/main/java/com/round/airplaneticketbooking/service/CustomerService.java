@@ -45,8 +45,8 @@ public class CustomerService {
 
     public List<Booking> getBookings(String token) {
         if (jwtService.isTokenValid(token, currentUser)) {
-            Long customerId = jwtService.getUserIdFromToken(token);
-            Customer loggedInCustomer = customerRepository.findById(customerId)
+            String customerEmail = jwtService.extractUsername(token);
+            Customer loggedInCustomer = customerRepository.findByEmail(customerEmail)
                     .orElseThrow(() -> new RuntimeException("Customer not found"));
             return bookingRepository.findByCustomerEmail(loggedInCustomer.getEmail());
         }
@@ -55,8 +55,8 @@ public class CustomerService {
 
     public boolean bookFlight(String token, Long flightId, int numberOfSeats) {
         if (jwtService.isTokenValid(token, currentUser)) {
-            Long customerId = jwtService.getUserIdFromToken(token);
-            Customer loggedInCustomer = customerRepository.findById(customerId)
+            String customerEmail = jwtService.extractUsername(token);
+            Customer loggedInCustomer = customerRepository.findByEmail(customerEmail)
                     .orElseThrow(() -> new RuntimeException("Customer not found"));
 
             Flight flight = flightRepository.findById(flightId)

@@ -7,24 +7,20 @@ import com.round.airplaneticketbooking.constants.request.RegisterRequest;
 import com.round.airplaneticketbooking.constants.enums.Role;
 import com.round.airplaneticketbooking.exception.CustomAuthenticationException;
 import com.round.airplaneticketbooking.util.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AdminAuthenticationService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService tokenProvider;
-
-    public AdminAuthenticationService(
-            AdminRepository adminRepository,
-            PasswordEncoder passwordEncoder,
-            JwtService tokenProvider) {
-        this.adminRepository = adminRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.tokenProvider = tokenProvider;
-    }
+    private final AuthenticationManager authenticationManager;
 
     public AuthenticationToken register(RegisterRequest request) {
         Admin admin = Admin.builder()
@@ -36,7 +32,7 @@ public class AdminAuthenticationService {
 
         adminRepository.save(admin);
 
-        String jwtToken = tokenProvider.generateToken(admin.getId());
+        String jwtToken = tokenProvider.generateToken(admin);
 
         return AuthenticationToken
                 .builder()
@@ -45,6 +41,12 @@ public class AdminAuthenticationService {
     }
 
     public AuthenticationToken authenticate(String email, String password) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        email,
+                        password
+                )
+        );
         Admin admin = adminRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found : " + email));
 
@@ -53,7 +55,7 @@ public class AdminAuthenticationService {
         }
 
         // Generate an authentication token
-        String token = tokenProvider.generateToken(admin.getId());
+        String token = tokenProvider.generateToken(admin);
 
         return AuthenticationToken
                 .builder()

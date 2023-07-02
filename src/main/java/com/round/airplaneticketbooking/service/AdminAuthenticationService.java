@@ -6,7 +6,8 @@ import com.round.airplaneticketbooking.constants.response.AuthenticationToken;
 import com.round.airplaneticketbooking.constants.request.RegisterRequest;
 import com.round.airplaneticketbooking.constants.enums.Role;
 import com.round.airplaneticketbooking.exception.CustomAuthenticationException;
-import com.round.airplaneticketbooking.util.JwtTokenProvider;
+import com.round.airplaneticketbooking.util.JwtService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +15,12 @@ import org.springframework.stereotype.Service;
 public class AdminAuthenticationService {
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider tokenProvider;
+    private final JwtService tokenProvider;
 
     public AdminAuthenticationService(
             AdminRepository adminRepository,
             PasswordEncoder passwordEncoder,
-            JwtTokenProvider tokenProvider) {
+            JwtService tokenProvider) {
         this.adminRepository = adminRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
@@ -35,7 +36,7 @@ public class AdminAuthenticationService {
 
         adminRepository.save(admin);
 
-        String jwtToken = tokenProvider.generateToken(admin.getAdminId());
+        String jwtToken = tokenProvider.generateToken(admin.getId());
 
         return AuthenticationToken
                 .builder()
@@ -45,14 +46,14 @@ public class AdminAuthenticationService {
 
     public AuthenticationToken authenticate(String email, String password) {
         Admin admin = adminRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomAuthenticationException("Invalid credentials."));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found : " + email));
 
         if (!passwordEncoder.matches(password, admin.getPassword())) {
             throw new CustomAuthenticationException("Invalid credentials.");
         }
 
         // Generate an authentication token
-        String token = tokenProvider.generateToken(admin.getAdminId());
+        String token = tokenProvider.generateToken(admin.getId());
 
         return AuthenticationToken
                 .builder()

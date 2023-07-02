@@ -6,7 +6,7 @@ import com.round.airplaneticketbooking.constants.request.RegisterRequest;
 import com.round.airplaneticketbooking.model.Flight;
 import com.round.airplaneticketbooking.repository.FlightRepository;
 import com.round.airplaneticketbooking.repository.BookingRepository;
-import com.round.airplaneticketbooking.util.JwtTokenProvider;
+import com.round.airplaneticketbooking.util.JwtService;
 import com.round.airplaneticketbooking.config.JwtConfig;
 
 import lombok.Data;
@@ -22,7 +22,7 @@ import java.util.List;
 public class AdminService {
     private final FlightRepository flightRepository;
     private final BookingRepository bookingRepository;
-    private final JwtTokenProvider tokenProvider;
+    private final JwtService tokenProvider;
     private final AdminAuthenticationService adminAuthenticationService;
 
     public AdminService(
@@ -32,7 +32,7 @@ public class AdminService {
             AdminAuthenticationService adminAuthenticationService) {
         this.flightRepository = flightRepository;
         this.bookingRepository = bookingRepository;
-        this.tokenProvider = new JwtTokenProvider(jwtConfig);
+        this.tokenProvider = new JwtService(jwtConfig);
         this.adminAuthenticationService = adminAuthenticationService;
     }
 
@@ -61,7 +61,7 @@ public class AdminService {
 
         List<Flight> flightFromRepo = flightRepository.findByDepartureDateTimeBetween(departureDateTimeStart, departureDateTimeEnd);
         if (!flightFromRepo.isEmpty()) {
-            flightId = flightFromRepo.get(0).getFlightId();
+            flightId = flightFromRepo.get(0).getId();
         }
 
         if (flightId != null) {

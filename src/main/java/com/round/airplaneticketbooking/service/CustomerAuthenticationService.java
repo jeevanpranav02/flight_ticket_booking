@@ -6,22 +6,23 @@ import com.round.airplaneticketbooking.constants.response.AuthenticationToken;
 import com.round.airplaneticketbooking.constants.request.RegisterRequest;
 import com.round.airplaneticketbooking.constants.enums.Role;
 import com.round.airplaneticketbooking.exception.CustomAuthenticationException;
-import com.round.airplaneticketbooking.util.JwtTokenProvider;
+import com.round.airplaneticketbooking.util.JwtService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserAuthenticationService {
+public class CustomerAuthenticationService {
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtService jwtService;
 
-    public UserAuthenticationService(CustomerRepository customerRepository,
-                                     PasswordEncoder passwordEncoder,
-                                     JwtTokenProvider jwtTokenProvider) {
+    public CustomerAuthenticationService(CustomerRepository customerRepository,
+                                         PasswordEncoder passwordEncoder,
+                                         JwtService jwtService) {
         this.customerRepository = customerRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
+        this.jwtService = jwtService;
     }
 
     public AuthenticationToken register(RegisterRequest request) {
@@ -35,7 +36,7 @@ public class UserAuthenticationService {
 
         customerRepository.save(customer);
 
-        String jwtToken = jwtTokenProvider.generateToken(customer.getCustomerId());
+        String jwtToken = jwtService.generateToken(customer.getId());
 
         return AuthenticationToken
                 .builder()
@@ -45,13 +46,13 @@ public class UserAuthenticationService {
 
     public AuthenticationToken authenticate(String email, String password) {
         Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomAuthenticationException("Invalid credentials."));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found : " + email));
 
         if (!passwordEncoder.matches(password, customer.getPassword())) {
             throw new CustomAuthenticationException("Invalid credentials.");
         }
 
-        String token = jwtTokenProvider.generateToken(customer.getCustomerId());
+        String token = jwtService.generateToken(customer.getId());
 
         return AuthenticationToken
                 .builder()

@@ -40,22 +40,7 @@ public class JwtService {
                 .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                ;
-    }
-
-
-    public String generateToken(Long userID) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpiration);
-
-        return Jwts
-                .builder()
-                .setSubject(Long.toString(userID))
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
+                .getBody();
     }
 
     public String generateToken(
@@ -76,35 +61,6 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
-    }
-
-    public Long getUserIdFromToken(String token) {
-        Claims claims = Jwts
-                .parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        return Long.parseLong(claims.getIssuer());
-    }
-
-    public boolean validateToken(String token, Long userId) {
-        try {
-            Claims claims = Jwts
-                    .parserBuilder()
-                    .setSigningKey(getSignInKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-
-            // Check if the subject (user ID) in the token matches the provided user ID
-            String tokenUserId = claims.getSubject();
-            return tokenUserId.equals(userId.toString());
-        } catch (Exception ex) {
-            // Token is invalid or expired
-            return false;
-        }
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

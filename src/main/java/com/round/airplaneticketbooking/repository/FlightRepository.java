@@ -12,14 +12,22 @@ import java.util.Optional;
 
 @Repository
 public interface FlightRepository extends JpaRepository<Flight, Long> {
-    Optional<Flight> findByFlightId(Long flightId);
+    Optional<Flight> findById(Long id);
 
     @Query("SELECT f FROM Flight f WHERE f.adminId = :adminId")
     List<Flight> findByAddedByAdminId(Long adminId);
 
+    @Query(
+            "SELECT f FROM Flight f " +
+            "WHERE f.availableSeats >= :availableSeats"
+    )
     List<Flight> findByAvailableSeats(int availableSeats);
 
+    @Query(
+            "SELECT f FROM Flight f " +
+            "WHERE f.departureDateTime " +
+            "BETWEEN :departureDateTimeStart AND :departureDateTimeEnd"
+    )
     List<Flight> findByDepartureDateTimeBetween(LocalDateTime departureDateTimeStart, LocalDateTime departureDateTimeEnd);
-
 
 }

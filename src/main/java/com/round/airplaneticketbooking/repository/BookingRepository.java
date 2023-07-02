@@ -23,5 +23,4 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "DATE(b.departureDateTime) = DATE(:departureDateTime)"
     )
     List<Booking> findByFlightAndDepartureDateTime(@Param("flightId") Long flightId, @Param("departureDateTime") LocalDateTime departureDateTime);
-
 }

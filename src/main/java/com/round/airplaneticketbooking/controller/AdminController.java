@@ -1,14 +1,12 @@
-package com.round.airplaneticketbooking.admin;
+package com.round.airplaneticketbooking.controller;
 
-import com.round.airplaneticketbooking.admin.auth.AdminAuthenticationService;
-import com.round.airplaneticketbooking.enumsAndTemplates.AuthenticationToken;
-import com.round.airplaneticketbooking.enumsAndTemplates.LoginRequest;
-import com.round.airplaneticketbooking.exception.CustomAuthenticationException;
-import com.round.airplaneticketbooking.flight.Flight;
-import com.round.airplaneticketbooking.flight.FlightRepository;
-import com.round.airplaneticketbooking.booking.Booking;
+import com.round.airplaneticketbooking.model.Flight;
+import com.round.airplaneticketbooking.repository.FlightRepository;
+import com.round.airplaneticketbooking.model.Booking;
+import com.round.airplaneticketbooking.service.AdminService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -16,44 +14,35 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/api/v1/")
 public class AdminController {
     private final AdminService adminService;
     private final FlightRepository flightRepository;
-    private final AdminAuthenticationService authenticationService;
 
-    public AdminController(AdminService adminService, FlightRepository flightRepository, AdminAuthenticationService authenticationService) {
+    public AdminController(
+            AdminService adminService,
+            FlightRepository flightRepository
+    ) {
         this.adminService = adminService;
         this.flightRepository = flightRepository;
-        this.authenticationService = authenticationService;
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        String email = loginRequest.getEmail();
-        String password = loginRequest.getPassword();
-
-        try {
-            AuthenticationToken authToken = authenticationService.authenticate(email, password);
-            return ResponseEntity.ok(authToken);
-        } catch (CustomAuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
-        }
     }
 
     @PostMapping("/flights")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Flight> addFlight(@RequestBody Flight flight) {
         Flight addedFlight = adminService.addFlight(flight);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedFlight);
     }
 
     @DeleteMapping("/flights/{flightId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> removeFlight(@PathVariable Long flightId) {
         adminService.removeFlight(flightId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/bookings/{flightId}/{flightTime}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<Booking>> getBookingsByFlightAndDepartureDateTime(@PathVariable Long flightId,
                                                                                  @PathVariable LocalDateTime flightTime) {
         Optional<Flight> optionalFlight = flightRepository.findByFlightId(flightId);
@@ -61,7 +50,7 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
         Flight flight = optionalFlight.get();
-        List<Booking> bookings = adminService.getBookingsByFlightAndDepartureDateTime(flight, flightTime);
+        List<Booking> bookings = adminService.getBookingsByFlightIdAndDepartureDateTime(flight.getFlightId(), flightTime);
         return ResponseEntity.ok(bookings);
     }
 

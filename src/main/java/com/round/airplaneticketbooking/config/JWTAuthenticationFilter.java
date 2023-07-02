@@ -65,7 +65,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if (userId != null && jwtTokenProvider.validateToken(jwtToken, userId)) {
+            if (jwtTokenProvider.validateToken(jwtToken, userId)) {
                 // If the JWT token is valid, create an authentication token and set it in the security context
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities()

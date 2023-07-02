@@ -1,7 +1,5 @@
-package com.round.airplaneticketbooking.booking;
+package com.round.airplaneticketbooking.model;
 
-import com.round.airplaneticketbooking.customer.Customer;
-import com.round.airplaneticketbooking.flight.Flight;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -22,16 +21,12 @@ public class Booking {
     @GeneratedValue
     private Long bookingId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+    private String customerEmail;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "flight_id")
-    private Flight flight;
+    private Long flightId;
 
     private int numberOfSeats;
-    private int totalPrice;
+    private BigDecimal totalPrice;
     private LocalDateTime bookingDateTime;
     private LocalDateTime departureDateTime;
 }

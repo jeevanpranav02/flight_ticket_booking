@@ -1,5 +1,6 @@
-package com.round.airplaneticketbooking.customer;
+package com.round.airplaneticketbooking.repository;
 
+import com.round.airplaneticketbooking.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

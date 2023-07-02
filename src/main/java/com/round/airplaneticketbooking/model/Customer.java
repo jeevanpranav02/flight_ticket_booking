@@ -1,7 +1,6 @@
-package com.round.airplaneticketbooking.customer;
+package com.round.airplaneticketbooking.model;
 
-import com.round.airplaneticketbooking.booking.Booking;
-import com.round.airplaneticketbooking.enumsAndTemplates.Role;
+import com.round.airplaneticketbooking.constants.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,13 +24,12 @@ public class Customer implements UserDetails {
     private Long customerId;
     private String userName;
     private String password;
+
+    @Column(unique=true)
     private String email;
     private String phone;
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Booking> bookings;
 
     public Customer() {
         role = Role.CUSTOMER;

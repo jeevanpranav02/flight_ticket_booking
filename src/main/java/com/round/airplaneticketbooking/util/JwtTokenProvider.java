@@ -23,16 +23,16 @@ public class JwtTokenProvider {
     }
 
 
-    public String generateToken(Long userId) {
+    public String generateToken(Long userID) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpiration);
 
         return Jwts
                 .builder()
-                .setSubject(Long.toString(userId))
+                .setSubject(Long.toString(userID))
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(getSignInKey(), SignatureAlgorithm.HS512)
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -44,7 +44,7 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
 
-        return Long.parseLong(claims.getSubject());
+        return Long.parseLong(claims.getIssuer());
     }
 
     public boolean validateToken(String token, Long userId) {

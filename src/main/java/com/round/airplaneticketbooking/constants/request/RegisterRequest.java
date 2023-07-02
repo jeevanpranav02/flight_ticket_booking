@@ -1,4 +1,4 @@
-package com.round.airplaneticketbooking.enumsAndTemplates;
+package com.round.airplaneticketbooking.constants.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

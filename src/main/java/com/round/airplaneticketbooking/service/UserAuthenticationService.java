@@ -1,9 +1,10 @@
-package com.round.airplaneticketbooking.customer.auth;
+package com.round.airplaneticketbooking.service;
 
-import com.round.airplaneticketbooking.customer.Customer;
-import com.round.airplaneticketbooking.customer.CustomerRepository;
-import com.round.airplaneticketbooking.enumsAndTemplates.AuthenticationToken;
-import com.round.airplaneticketbooking.enumsAndTemplates.RegisterRequest;
+import com.round.airplaneticketbooking.model.Customer;
+import com.round.airplaneticketbooking.repository.CustomerRepository;
+import com.round.airplaneticketbooking.constants.response.AuthenticationToken;
+import com.round.airplaneticketbooking.constants.request.RegisterRequest;
+import com.round.airplaneticketbooking.constants.enums.Role;
 import com.round.airplaneticketbooking.exception.CustomAuthenticationException;
 import com.round.airplaneticketbooking.util.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +28,8 @@ public class UserAuthenticationService {
         Customer customer = Customer.builder()
                 .userName(request.getUserName())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .phone(request.getPhone())
+                .role(Role.CUSTOMER)
                 .email(request.getEmail())
                 .build();
 
@@ -55,5 +58,4 @@ public class UserAuthenticationService {
                 .token(token)
                 .build();
     }
-
 }

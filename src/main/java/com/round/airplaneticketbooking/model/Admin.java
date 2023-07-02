@@ -1,7 +1,6 @@
-package com.round.airplaneticketbooking.admin;
+package com.round.airplaneticketbooking.model;
 
-import com.round.airplaneticketbooking.enumsAndTemplates.Role;
-import com.round.airplaneticketbooking.flight.Flight;
+import com.round.airplaneticketbooking.constants.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,14 +22,12 @@ public class Admin implements UserDetails {
     @GeneratedValue
     private Long adminId;
     private String userName;
+
+    @Column(unique=true)
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    @OneToMany(mappedBy = "addedByAdmin", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Flight> flights;
-
 
     public Admin() {
         role = Role.ADMIN;
@@ -42,6 +39,7 @@ public class Admin implements UserDetails {
         this.password = password;
         role = Role.ADMIN;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,21 +1,22 @@
 package com.round.airplaneticketbooking.service;
 
-import com.round.airplaneticketbooking.model.Booking;
-import com.round.airplaneticketbooking.constants.response.AuthenticationToken;
-import com.round.airplaneticketbooking.constants.request.RegisterRequest;
-import com.round.airplaneticketbooking.model.Flight;
-import com.round.airplaneticketbooking.repository.FlightRepository;
-import com.round.airplaneticketbooking.repository.BookingRepository;
-import com.round.airplaneticketbooking.util.JwtService;
-import com.round.airplaneticketbooking.config.JwtConfig;
-
-import lombok.Data;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import org.springframework.stereotype.Service;
+import com.round.airplaneticketbooking.config.JwtConfig;
+import com.round.airplaneticketbooking.constants.request.AddFlightRequest;
+import com.round.airplaneticketbooking.constants.request.RegisterRequest;
+import com.round.airplaneticketbooking.constants.response.AuthenticationToken;
+import com.round.airplaneticketbooking.model.Admin;
+import com.round.airplaneticketbooking.model.Booking;
+import com.round.airplaneticketbooking.model.Flight;
+import com.round.airplaneticketbooking.repository.BookingRepository;
+import com.round.airplaneticketbooking.repository.FlightRepository;
+import com.round.airplaneticketbooking.util.JwtService;
+import lombok.Data;
 
 @Service
 @Data
@@ -25,11 +26,8 @@ public class AdminService {
     private final JwtService tokenProvider;
     private final AdminAuthenticationService adminAuthenticationService;
 
-    public AdminService(
-            FlightRepository flightRepository,
-            BookingRepository bookingRepository,
-            JwtConfig jwtConfig,
-            AdminAuthenticationService adminAuthenticationService) {
+    public AdminService(FlightRepository flightRepository, BookingRepository bookingRepository,
+            JwtConfig jwtConfig, AdminAuthenticationService adminAuthenticationService) {
         this.flightRepository = flightRepository;
         this.bookingRepository = bookingRepository;
         this.tokenProvider = new JwtService(jwtConfig);
@@ -47,7 +45,16 @@ public class AdminService {
     }
 
 
-    public Flight addFlight(Flight flight) {
+    public Flight addFlight(AddFlightRequest request, Optional<Admin> authenticatedAdmin) {
+        Flight flight = Flight.builder().airline(request.getAirline())
+                .arrivalAirport(request.getArrivalAirport())
+                .admin(authenticatedAdmin.orElse(null))
+                .departureDateTime(request.getDepartureDateTime())
+                .departureAirport(request.getDepartureAirport())
+                .timeOfFlight(request.getTimeOfFlight()).price(request.getPrice())
+                .maximumSeats(request.getMaximumSeats()).availableSeats(request.getAvailableSeats())
+                .build();
+
         return flightRepository.save(flight);
     }
 
@@ -55,17 +62,23 @@ public class AdminService {
         flightRepository.deleteById(flightId);
     }
 
-    public List<Booking> getBookingsByFlightIdAndDepartureDateTime(Long flightId, LocalDateTime departureDateTime) {
+    public List<Flight> getFlightsByDepartureDate(LocalDateTime departureDateTime) {
         LocalDateTime departureDateTimeStart = departureDateTime.with(LocalTime.MIN);
         LocalDateTime departureDateTimeEnd = departureDateTime.with(LocalTime.MAX);
 
-        List<Flight> flightFromRepo = flightRepository.findByDepartureDateTimeBetween(departureDateTimeStart, departureDateTimeEnd);
-        if (!flightFromRepo.isEmpty()) {
-            flightId = flightFromRepo.get(0).getId();
+        List<Flight> flightList = flightRepository
+                .findByDepartureDateTimeBetween(departureDateTimeStart, departureDateTimeEnd);
+
+        if (flightList.isEmpty()) {
+            return Collections.emptyList();
         }
 
+        return flightList;
+    }
+
+    public List<Booking> getBookingsByFlightId(Long flightId) {
         if (flightId != null) {
-            return bookingRepository.findByFlightAndDepartureDateTime(flightId, departureDateTime);
+            return bookingRepository.findByFlightId(flightId);
         }
 
         return Collections.emptyList();

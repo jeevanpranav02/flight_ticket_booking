@@ -23,7 +23,7 @@ This project is an Airplane Ticket Booking System that allows users to search fo
 
 - [x] **Admin Login**: Administrators can authenticate themselves into the system with administrative privileges.
 - [x] **Admin Sign up**: Administrators can create a new account with appropriate data validations.
-- [ ] **Add Flights**: Administrators can add new flights to the system, providing flight details such as airline, departure, and arrival information.
+- [x] **Add Flights**: Administrators can add new flights to the system, providing flight details such as airline, departure, and arrival information.
 - [ ] **Remove Flights**: Administrators can remove flights from the system based on flight number or other criteria.
 - [ ] **View Bookings**: Administrators can view all the bookings for a specific flight based on flight number and time.
 - [ ] **Logout**: Administrators can log out from the system.

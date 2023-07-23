@@ -3,6 +3,7 @@ package com.round.airplaneticketbooking.controller;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,15 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.round.airplaneticketbooking.constants.request.AddFlightRequest;
 import com.round.airplaneticketbooking.constants.response.AddFlightResponseDTO;
-import com.round.airplaneticketbooking.model.Admin;
 import com.round.airplaneticketbooking.model.Booking;
 import com.round.airplaneticketbooking.model.Flight;
-import com.round.airplaneticketbooking.repository.AdminRepository;
 import com.round.airplaneticketbooking.repository.FlightRepository;
 import com.round.airplaneticketbooking.service.AdminService;
-import com.round.airplaneticketbooking.service.FlightService;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,20 +28,17 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/admin")
 public class AdminController {
     private final AdminService adminService;
-    private final AdminRepository adminRepository;
     private final FlightRepository flightRepository;
-    private final FlightService flightService;
 
-    @PostMapping("/flights")
+    @PostMapping("/flight")
     public ResponseEntity<AddFlightResponseDTO> addFlight(
-            @RequestBody AddFlightRequest flightRequest, Principal principal) {
-        Optional<Admin> authenticatedAdmin = adminRepository.findByEmail(principal.getName());
-        Flight addedFlight = adminService.addFlight(flightRequest, authenticatedAdmin);
-        AddFlightResponseDTO responseDTO = flightService.mapToAddFlightResponseDTO(addedFlight);
+            @RequestBody AddFlightRequest flightRequest,
+            Principal principal) {
+        AddFlightResponseDTO responseDTO = adminService.addFlight(flightRequest, principal);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    @DeleteMapping("/flights/{flightId}")
+    @DeleteMapping("/flight/{flightId}")
     public ResponseEntity<Void> removeFlight(@PathVariable Long flightId) {
         adminService.removeFlight(flightId);
         return ResponseEntity.noContent().build();

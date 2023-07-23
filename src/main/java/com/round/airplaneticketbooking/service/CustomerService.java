@@ -48,38 +48,38 @@ public class CustomerService {
             String customerEmail = jwtService.extractUsername(token);
             Customer loggedInCustomer = customerRepository.findByEmail(customerEmail)
                     .orElseThrow(() -> new RuntimeException("Customer not found"));
-            return bookingRepository.findByCustomerEmail(loggedInCustomer.getEmail());
+            return bookingRepository.findByCustomer(loggedInCustomer);
         }
         throw new RuntimeException("Invalid token");
     }
 
-    public boolean bookFlight(String token, Long flightId, int numberOfSeats) {
-        if (jwtService.isTokenValid(token, currentUser)) {
-            String customerEmail = jwtService.extractUsername(token);
-            Customer loggedInCustomer = customerRepository.findByEmail(customerEmail)
-                    .orElseThrow(() -> new RuntimeException("Customer not found"));
-
-            Flight flight = flightRepository.findById(flightId)
-                    .orElseThrow(() -> new RuntimeException("Flight not found"));
-
-            if (flight.getAvailableSeats() >= numberOfSeats) {
-                flight.setAvailableSeats(flight.getAvailableSeats() - numberOfSeats);
-                Booking booking = new Booking();
-                booking.setFlightId(flight.getId());
-                booking.setCustomerEmail(loggedInCustomer.getEmail());
-                booking.setNumberOfSeats(numberOfSeats);
-                booking.setBookingDateTime(LocalDateTime.now());
-
-                BigDecimal totalPrice = flight.getPrice().multiply(BigDecimal.valueOf(numberOfSeats));
-                booking.setTotalPrice(totalPrice);
-
-                bookingRepository.save(booking);
-                flightRepository.save(flight);
-                return true;
-            }
-            return false;
-        }
-        throw new RuntimeException("Invalid token");
-    }
+//    public boolean bookFlight(String token, Long flightId, int numberOfSeats) {
+//        if (jwtService.isTokenValid(token, currentUser)) {
+//            String customerEmail = jwtService.extractUsername(token);
+//            Customer loggedInCustomer = customerRepository.findByEmail(customerEmail)
+//                    .orElseThrow(() -> new RuntimeException("Customer not found"));
+//
+//            Flight flight = flightRepository.findById(flightId)
+//                    .orElseThrow(() -> new RuntimeException("Flight not found"));
+//
+//            if (flight.getAvailableSeats() >= numberOfSeats) {
+//                flight.setAvailableSeats(flight.getAvailableSeats() - numberOfSeats);
+//                Booking booking = new Booking();
+//                booking.setFlightId(flight.getId());
+//                booking.setCustomerEmail(loggedInCustomer.getEmail());
+//                booking.setNumberOfSeats(numberOfSeats);
+//                booking.setBookingDateTime(LocalDateTime.now());
+//
+//                BigDecimal totalPrice = flight.getPrice().multiply(BigDecimal.valueOf(numberOfSeats));
+//                booking.setTotalPrice(totalPrice);
+//
+//                bookingRepository.save(booking);
+//                flightRepository.save(flight);
+//                return true;
+//            }
+//            return false;
+//        }
+//        throw new RuntimeException("Invalid token");
+//    }
 
 }

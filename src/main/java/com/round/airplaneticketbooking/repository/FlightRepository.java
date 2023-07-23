@@ -14,7 +14,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     Optional<Flight> findById(Long id);
 
     @Query("SELECT f FROM Flight f WHERE f.admin = :admin")
-    List<Flight> findByAddedByAdmin(Admin admin);
+    List<Flight> findByAdmin(Admin admin);
 
     @Query("SELECT f FROM Flight f " + "WHERE f.availableSeats >= :availableSeats")
     List<Flight> findByAvailableSeats(int availableSeats);

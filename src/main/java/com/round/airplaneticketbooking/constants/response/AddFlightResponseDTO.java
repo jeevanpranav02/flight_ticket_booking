@@ -1,6 +1,7 @@
 package com.round.airplaneticketbooking.constants.response;
 
 import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,4 +21,5 @@ public class AddFlightResponseDTO {
     private BigDecimal price;
     private int maximumSeats;
     private int availableSeats;
+    private boolean isActive;
 }

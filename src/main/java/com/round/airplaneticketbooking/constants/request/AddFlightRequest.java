@@ -15,4 +15,5 @@ public class AddFlightRequest {
     private BigDecimal price;
     private int maximumSeats;
     private int availableSeats;
+    private boolean isActive;
 }

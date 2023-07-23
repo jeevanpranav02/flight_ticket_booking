@@ -1,61 +1,58 @@
 package com.round.airplaneticketbooking.service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import com.round.airplaneticketbooking.exception.CustomAuthenticationException;
 import org.springframework.stereotype.Service;
-import com.round.airplaneticketbooking.config.JwtConfig;
 import com.round.airplaneticketbooking.constants.request.AddFlightRequest;
 import com.round.airplaneticketbooking.constants.request.RegisterRequest;
+import com.round.airplaneticketbooking.constants.response.AddFlightResponseDTO;
 import com.round.airplaneticketbooking.constants.response.AuthenticationToken;
 import com.round.airplaneticketbooking.model.Admin;
 import com.round.airplaneticketbooking.model.Booking;
 import com.round.airplaneticketbooking.model.Flight;
+import com.round.airplaneticketbooking.repository.AdminRepository;
 import com.round.airplaneticketbooking.repository.BookingRepository;
 import com.round.airplaneticketbooking.repository.FlightRepository;
-import com.round.airplaneticketbooking.util.JwtService;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@Data
+@RequiredArgsConstructor
 public class AdminService {
     private final FlightRepository flightRepository;
     private final BookingRepository bookingRepository;
-    private final JwtService tokenProvider;
+    private final AdminRepository adminRepository;
+    private final FlightService flightService;
     private final AdminAuthenticationService adminAuthenticationService;
 
-    public AdminService(FlightRepository flightRepository, BookingRepository bookingRepository,
-            JwtConfig jwtConfig, AdminAuthenticationService adminAuthenticationService) {
-        this.flightRepository = flightRepository;
-        this.bookingRepository = bookingRepository;
-        this.tokenProvider = new JwtService(jwtConfig);
-        this.adminAuthenticationService = adminAuthenticationService;
-    }
-
     public AuthenticationToken signup(RegisterRequest registerRequest) {
-        AuthenticationToken token = adminAuthenticationService.register(registerRequest);
-        return token;
+        return adminAuthenticationService.register(registerRequest);
     }
 
     public AuthenticationToken login(String email, String password) {
-        AuthenticationToken token = adminAuthenticationService.authenticate(email, password);
-        return token;
+        return adminAuthenticationService.authenticate(email, password);
     }
 
-
-    public Flight addFlight(AddFlightRequest request, Optional<Admin> authenticatedAdmin) {
+    public AddFlightResponseDTO addFlight(AddFlightRequest request, Principal principal) {
+        Optional<Admin> authenticatedAdmin = adminRepository.findByEmail(principal.getName());
+        Admin admin = authenticatedAdmin.orElseThrow(()-> new CustomAuthenticationException("Admin Exception"));
         Flight flight = Flight.builder().airline(request.getAirline())
+                .admin(admin)
                 .arrivalAirport(request.getArrivalAirport())
-                .admin(authenticatedAdmin.orElse(null))
                 .departureDateTime(request.getDepartureDateTime())
                 .departureAirport(request.getDepartureAirport())
                 .timeOfFlight(request.getTimeOfFlight()).price(request.getPrice())
                 .maximumSeats(request.getMaximumSeats()).availableSeats(request.getAvailableSeats())
+                .isActive(request.isActive())
                 .build();
-
-        return flightRepository.save(flight);
+        
+        flightRepository.save(flight);
+        return flightService.mapToAddFlightResponseDTO(flight);
     }
 
     public void removeFlight(Long flightId) {
@@ -77,8 +74,10 @@ public class AdminService {
     }
 
     public List<Booking> getBookingsByFlightId(Long flightId) {
-        if (flightId != null) {
-            return bookingRepository.findByFlightId(flightId);
+        Flight flight = flightRepository.findById(flightId)
+                                        .orElse(null);
+        if (flight != null) {
+            return bookingRepository.findByFlight(flight);
         }
 
         return Collections.emptyList();
